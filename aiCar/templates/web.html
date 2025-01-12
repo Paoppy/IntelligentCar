@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能驾驶</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .window {
+            flex: 2;
+            background-color: #54546a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid #ccc;
+        }
+        .window img {
+            width: 640px;
+            height: 640px;
+            object-fit: contain;
+        }
+        .buttons {
+            flex: 1;
+            display: grid;
+            grid-template-rows: 1fr 2fr;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 20px;
+            background-color: #f3f3f3;
+        }
+        .top-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 0fr);
+            gap: 20px;
+            justify-content: center;
+        }
+        .bottom-buttons {
+            display: grid;
+            grid-template-areas: 
+                ". top ."
+                "left center right"
+                ". bottom .";
+            gap: 5px;
+            height: 100%;
+            grid-template-columns: 0fr 0fr 0fr;
+            grid-template-rows: 0fr 0fr 0fr;
+            justify-items: center;
+            align-items: center;
+            justify-content: center;
+        }
+        .bottom-buttons .left {
+            grid-area: left;
+        }
+        .bottom-buttons .right {
+            grid-area: right;
+        }
+        .bottom-buttons .top {
+            grid-area: top;
+        }
+        .bottom-buttons .bottom {
+            grid-area: bottom;
+        }
+        .bottom-buttons .center {
+            grid-area: center;
+        }
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .top-buttons .button {
+            width: 225px;
+            height: 150px;
+            background-color: #fe4343;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .bottom-buttons .button {
+            width: 120px;
+            height: 120px;
+            background-color: #007BFF;
+            color: #fe8282;
+            font-size: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <img src="{{ url_for('video_start') }}" alt="Video Stream">
+    </div>
+    <div class="buttons">
+        <div class="top-buttons">
+            <button class="button" onclick="sendMessage('A')">自动</button>
+            <button class="button" onclick="sendMessage('C')">手动</button>
+        </div>
+        <div class="bottom-buttons">
+            <button class="button top" onclick="sendMessage('F')">▲</button>
+            <button class="button left" onclick="sendMessage('L')">◀</button>
+            <button class="button center" onclick="sendMessage('S')">◉</button>
+            <button class="button right" onclick="sendMessage('R')">▶</button>
+            <button class="button bottom" onclick="sendMessage('B')">▼</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage(buttonName) {
+            // 输出信息到浏览器的控制台
+            console.log('OK: ' + buttonName);
+
+            // 将点击的按钮名称发送到后端
+            fetch('/api/button-click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: buttonName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
